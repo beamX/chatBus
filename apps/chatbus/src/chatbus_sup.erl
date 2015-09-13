@@ -15,6 +15,13 @@
 
 -define(SERVER, ?MODULE).
 
+
+-define(CHILD(Id, Mod, Args, Restart, Type), {Id, {Mod, start_link, Args},
+                                              Restart, 60000, Type, [Mod]}).
+
+-define(SIMPLE_CHILD(WorkerMod), ?CHILD(WorkerMod, WorkerMod, [], transient,
+                                        worker)).
+
 %%====================================================================
 %% API functions
 %%====================================================================
@@ -28,7 +35,7 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+    {ok, { {one_for_all, 10, 60}, [?SIMPLE_CHILD(bus_manager)]} }.
 
 %%====================================================================
 %% Internal functions

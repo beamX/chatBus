@@ -1,11 +1,18 @@
 {application, 'chatbus',
- [{description, "An OTP application"},
+ [{description, "ChatBus: mulit user chat rooms app."},
   {vsn, "0.1.0"},
   {registered, []},
   {mod, {'chatbus_app', []}},
   {applications,
-   [kernel,
-    stdlib
+   [kernel
+   ,stdlib
+   ,crypto
+   ,sasl
+   ,syntax_tools
+   ,mochiweb
+   ,cowboy
+   ,ebus
+   ,sync
    ]},
   {env,[]},
   {modules, []},

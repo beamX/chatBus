@@ -1,0 +1,64 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<dom-module id="new-bus">
+
+  <template>
+    <style>
+     :host {
+         display: block;
+     }
+
+     paper-input {
+         font: inherit;
+         outline: none;
+         box-shadow: none;
+         border: none;
+         width: auto;
+
+     }
+    </style>
+
+
+    <paper-input label="Add new ChatBus"
+                 no-label-float
+                 id="create-bus"
+                 bind-value="{{busname}}">
+
+      <paper-icon-button suffix on-click="add_new_bus"
+                         style="color: #e91e63;"
+                         icon="add" alt="add" title="add">
+
+      </paper-icon-button>
+    </paper-input>
+
+
+  </template>
+
+  <script>
+   (function() {
+       Polymer({
+           is: 'new-bus',
+           properties: {
+               busname: "String"
+           },
+           add_new_bus: function (e){
+               $.event.trigger({
+	           type: "send_message",
+                   msg_type: 'add_bus',
+                   message: this.busname
+               });
+               $(this).find('paper-input').val("");
+           }
+       });
+   })();
+  </script>
+
+</dom-module>

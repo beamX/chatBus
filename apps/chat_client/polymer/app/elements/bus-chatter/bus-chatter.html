@@ -1,0 +1,112 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<dom-module id="bus-chatter">
+
+  <template>
+    <style>
+     :host {
+         display: block;
+     }
+    </style>
+
+
+    <paper-dialog id="info-box" entry-animation="scale-up-animation"
+                  exit-animation="fade-out-animation"
+                  style="background: white;"
+                  with-backdrop>
+      <h2>Info</h2>
+      <p id="message"></p>
+      <paper-input label="Add new ChatBus"
+                   no-label-float
+                   id="create-bus"
+                   bind-value="{{busname}}">
+
+        <paper-icon-button suffix on-click="add_new_bus"
+                           style="color: #e91e63;"
+                           icon="add" alt="add" title="add">
+
+        </paper-icon-button>
+
+      </paper-input>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>OK</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+</dom-module>
+
+<script>
+ (function() {
+     Polymer({
+         is: 'bus-chatter',
+
+         ws: null,
+
+         ready: function () {
+             this.connect_to_chatBus();
+         },
+
+         info: function(Message) {
+             $(this).find("#message").html(Message);
+             var dialog = document.getElementById('info-box');
+             dialog.open();
+         },
+
+         connect_to_chatBus: function() {
+
+             var ws_url = "ws://" + location.host + "/ws";
+             this.ws           = new WebSocket(ws_url);
+             this.ws.onerror   = this.handleError.bind(this);
+             this.ws.onopen    = this.handleOpen.bind(this);
+             this.ws.onmessage = this.receiveMessage.bind(this);
+
+             // bind document event to send message to server
+             $(document).unbind("send_message");
+             $(document).on("send_message", (function(_this) {
+                 return function(e) {
+                     Message = {
+                         type: e.msg_type,
+                         msg : e.message
+                     };
+                     console.log("sending ", Message);
+                     _this.ws.send(JSON.stringify(Message));
+                 };
+             })(this));
+
+         },
+
+         handleError: function(error) {
+             this.info("Disconnected from ChatBus");
+         },
+
+         handleOpen: function(error) {
+             $.event.trigger({
+	         type: "send_message",
+                 msg_type: 'bus_list',
+                 message: ""
+             });
+             this.info("Connected to chatBus server !");
+         },
+
+         receiveMessage: function(e) {
+             var Data = JSON.parse(e.data);
+             console.log(Data);
+             $.event.trigger({
+	         type: Data.type,
+                 msg: Data.msg
+             });
+         },
+
+
+     });
+ })();
+</script>

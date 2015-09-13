@@ -1,0 +1,331 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<html lang="">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>ChatBus</title>
+    <!-- Place favicon.ico in the `app/` directory -->
+    <link rel="shortcut icon" href="chatbus.ico" type="image/x-icon"/>
+
+
+
+
+    <!-- Chrome for Android theme color -->
+    <meta name="theme-color" content="#f44336">
+
+    <!-- Web Application Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Tile color for Win8 -->
+    <meta name="msapplication-TileColor" content="#f44336">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="PSK">
+    <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
+    <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
+
+    <!-- Tile icon for Win8 (144x144) -->
+    <meta name="msapplication-TileImage"
+          content="images/touch/ms-touch-icon-144x144-precomposed.png">
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild-->
+
+    <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- endbuild -->
+
+    <!-- will be replaced with elements/elements.vulcanized.html -->
+    <link rel="import" href="elements/elements.html">
+    <!-- endreplace-->
+
+
+  </head>
+
+  <body unresolved class="fullbleed layout vertical">
+    <!-- <span id="browser-sync-binding"></span> -->
+    <template is="dom-bind" id="app">
+
+
+
+      <div horizontal layout>
+
+        <paper-drawer-panel >
+
+          <paper-scroll-header-panel drawer fixed
+                                     style="background-color: #EEE; ">
+
+            <!-- Drawer Toolbar -->
+            <paper-toolbar id="drawerToolbar"
+                           style="color:#e91e63; background-color: #EEE; " >
+
+              <iron-icon icon="maps:directions-subway"
+                         style="margin-left: 50px;
+                                margin-right: 5px;"></iron-icon>
+              <span class="paper-font-title"  > ChatBus</span>
+            </paper-toolbar>
+
+
+            <side-bar></side-bar>
+
+            <!-- Drawer Content -->
+            <paper-menu id="bus_list" style="background-color: #EEE;" class="list"
+                        attr-for-selected="data-route" selected="{{route}}"
+                        on-iron-select="onMenuSelect">
+
+              <paper-button tabindex="0" class="sidebar">
+                <iron-icon icon="supervisor-account"></iron-icon>
+                <span>Bus 1</span>
+              </paper-button>
+
+              <paper-button tabindex="0" class="sidebar ">
+                <iron-icon icon="supervisor-account"></iron-icon>
+                <span>Bus 2</span>
+              </paper-button>
+
+              <paper-button tabindex="0" class="sidebar ">
+                <iron-icon icon="supervisor-account"></iron-icon>
+                <span>Bus 3</span>
+              </paper-button>
+
+            </paper-menu>
+
+
+            <div horizontal layout style="position: fixed;
+                                          bottom: 0;
+                                          padding-left: 10px; " >
+              <new-bus></new-bus>
+            </div>
+
+
+          </paper-scroll-header-panel>
+
+
+
+
+          <!-- Main Area -->
+          <paper-scroll-header-panel main fixed keep-condensed-header>
+
+            <paper-drawer-panel right-drawer>
+
+              <paper-scroll-header-panel drawer fixed>
+
+                <!-- Drawer Toolbar -->
+                <paper-toolbar id="drawerToolbar" style="color:#e91e63; ">
+                  <span class="paper-font-title">Hitchhickers</span>
+                </paper-toolbar>
+
+                <!-- Drawer Content -->
+                <paper-menu id="hitchhickers" class="list"
+                            attr-for-selected="data-route"
+                            selected="{{route}}"
+                            on-iron-select="onMenuSelect">
+
+                  <a href="#">
+                    <iron-icon icon="face"></iron-icon>
+                    <span>User 1</span>
+                  </a>
+                  <a href="#">
+                    <iron-icon icon="face"></iron-icon>
+                    <span>User 2</span>
+                  </a>
+                  <a href="#">
+                    <iron-icon icon="face"></iron-icon>
+                    <span>User 3</span>
+                  </a>
+                </paper-menu>
+
+                <!-- <div horizontal layout style=" position: fixed;
+                bottom: 0;
+                padding-left: 10px; " >
+
+                <paper-input label="Invite to this ChatBus"
+                no-label-float
+                id="create-bus">
+
+                <paper-icon-button suffix onclick="clearInput()"
+                style="color: #e91e63;"
+                icon="social:person-add"
+                alt="clear"
+                title="clear">
+
+                </paper-input>
+
+                </div> -->
+
+
+
+              </paper-scroll-header-panel>
+
+
+              <paper-scroll-header-panel main fixed keep-condensed-header>
+
+                <!-- Main Toolbar -->
+                <paper-toolbar id="mainToolbar" >
+
+                  <!-- Application name -->
+                  <div class="middle middle-container center horizontal layout flex">
+                    <div class="app-name ">Bus name: #default </div>
+                    <span class="flex"> </span>
+                    <div style="text-align: right;">
+                      <paper-menu-button horizontal-offset="-350" >
+                        <paper-icon-button icon="menu" class="dropdown-trigger"
+                                           alt="menu"> </paper-icon-button>
+                        <paper-menu class="dropdown-content">
+                          <paper-item>Random Information</paper-item>
+                          <paper-item>Rules</paper-item>
+                          <paper-item>About</paper-item>
+                        </paper-menu>
+                      </paper-menu-button>
+                    </div>
+                  </div>
+                </paper-toolbar>
+
+
+                <!-- message desplay -->
+                <bus-chatter > </bus-chatter>
+
+
+                <msg-folder flex style="height: 92%; overflow: auto; " >
+
+                  <message-card msg="hi there"
+                                author="vanshdeep singh"
+                                alignment="right"> </message-card>
+
+
+                  <message-card author="kansi"
+                                msg="Lorem ipsum dolor sit amet, nec ad conceptam"
+                                alignment="left"> </message-card>
+
+                  <message-card author="kansi"
+                                msg="Lorem ipsum dolor sit amet, nec ad conceptam"
+                                alignment="right"> </message-card>
+
+                  <message-card author="kansi"
+                                msg="Lorem ipsum dolor sit amet, nec ad conceptam"
+                                alignment="left"> </message-card>
+
+                </msg-folder>
+
+
+
+                <message-box flex style="position: fixed;
+                                         width: 60%;
+                                         bottom: 0;
+                                         padding-right: 10px;
+                                         padding-left: 10px; "></message-box>
+
+
+
+                <!-- <div style="
+                position: fixed;
+                bottom: 0;
+                padding-right: 10px;
+                padding-left: 10px; " >
+
+
+                </div> -->
+
+              </paper-scroll-header-panel>
+
+            </paper-drawer-panel >
+
+          </paper-scroll-header-panel>
+
+        </paper-drawer-panel>
+
+      </div>
+
+
+      <!-- <paper-drawer-panel id="paperDrawerPanel"> </paper-drawer-panel> -->
+
+      <!-- Uncomment next block to enable Service Worker support (1/2) -->
+      <!--
+      <paper-toast id="caching-complete"
+      duration="6000"
+      text="Caching complete! This app will work offline.">
+      </paper-toast>
+
+      <platinum-sw-register auto-register
+      clients-claim
+      skip-waiting
+      on-service-worker-installed="displayInstalledToast">
+      <platinum-sw-cache default-cache-strategy="networkFirst"
+      precache-file="precache.json">
+      </platinum-sw-cache>
+      </platinum-sw-register>
+      -->
+
+    </template>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- <script src="static/js/jquery-ui.min.js"></script> -->
+
+    <!-- build:js scripts/app.js -->
+    <script src="scripts/app.js"></script>
+
+    <script type="text/javascript">
+     $(document).unbind("bus_list");
+     $(document).on("bus_list", function(e) {
+
+         console.log("sidebar received", e.msg);
+
+         var Buses       = e.msg.sort();
+         var ActiveBuses = Buses.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
+
+
+         $(document).find("#bus_list").empty();
+
+
+         var arrayLength = ActiveBuses.length;
+         for (var i = 0; i < arrayLength; i++) {
+             var Busbutton = "<paper-button tabindex=\"0\" class=\"sidebar\">\
+                          <iron-icon icon=\"supervisor-account\"></iron-icon>\
+                          <span>" + ActiveBuses[i] + "</span> </paper-button>";
+             $(document).find("#bus_list").append(Busbutton);
+
+         }
+     });
+
+
+     $(document).unbind("bus_subscribed");
+     $(document).on("bus_subscribed", function(e) {
+         console.log("bus subscribed", e.msg);
+         $(document).find(".app-name").html("Bus name: #" + e.msg);
+     });
+
+    </script>
+
+
+
+    <script>
+
+
+
+    </script>
+
+
+    <!-- endbuild-->
+  </body>
+
+</html>
