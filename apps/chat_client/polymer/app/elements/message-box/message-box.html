@@ -28,7 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div>
       <paper-input label="say something !"  bind-value="{{message}}" >
-        <span prefix style="margin-right: 10px; color: #1a237e"> kansi : </span>
+        <span prefix style="margin-right: 10px; color: #1a237e"> <span id="username">User</span> : </span>
         <!-- <paper-icon-button suffix onclick="clearInput()"
         style="margin-right: 10px; color: #e91e63; z-index: 1;"
         icon="clear" alt="clear" title="clear" tabindex="0">
@@ -67,7 +67,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                        author: "sombody",
                        align: "left"
                    });
-                   
+
 
                });
 
@@ -84,13 +84,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
            submit_message: function (e) {
                if (e.keyCode == 13) {
                    var input = $(this).find('paper-input');
-
-                   $.event.trigger({
-	               type: "add_message",
-                       message: this.message,
-                       author: " Me",
-                       align: "right"
-                   });
+                   var bus   = document.querySelector('bus-chatter');
+        
+                   if (bus.username != undefined) {
+                       $.event.trigger({
+	                   type: "add_message",
+                           message: this.message,
+                           author: " Me",
+                           align: "right"
+                       });
+                   }
 
                    $.event.trigger({
 	               type: "send_message",

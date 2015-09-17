@@ -22,23 +22,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   exit-animation="fade-out-animation"
                   style="background: white;"
                   with-backdrop>
-      <h2>Info</h2>
+      <h2>ChatBus</h2>
       <p id="message"></p>
-      <paper-input label="Add new ChatBus"
-                   no-label-float
-                   id="create-bus"
-                   bind-value="{{busname}}">
 
-        <paper-icon-button suffix on-click="add_new_bus"
+
+      <paper-input label="Select a username"
+                   style="margin-top: 0"
+                   no-label-float
+                   id="select-username"
+                   required
+                   error-message="letters only!"
+                   validator="test_valid"
+                   bind-value="{{username}}">
+
+        <div suffix id="error" style="width: 70px;
+                                      color: red;
+                                      margin-bottom: 5px;
+                                      font-size:10px"></div>
+        <paper-icon-button suffix on-click="assign_username"
                            style="color: #e91e63;"
-                           icon="add" alt="add" title="add">
+                           icon="check" alt="add" title="add">
 
         </paper-icon-button>
 
       </paper-input>
-      <div class="buttons">
-        <paper-button dialog-confirm autofocus>OK</paper-button>
-      </div>
+      <!-- <div class="buttons">
+      <paper-button dialog-confirm autofocus>OK</paper-button>
+      </div> -->
     </paper-dialog>
 
   </template>
@@ -51,14 +61,58 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
          ws: null,
 
+         properties: {
+             dialog: Object,
+             username: {
+                 type: String,
+                 value: undefined
+             }
+         },
+
+         assign_username: function (e){
+             Name = $.trim(this.username);
+             if (Name == "" || Name == undefined){ return false;};
+
+             $.event.trigger({
+	         type: "send_message",
+                 msg_type: 'username',
+                 message: Name
+             });
+
+             /*              $(document).unbind("username_error"); */
+             $(document).on("username_error", (function(_this) {
+                 return function(e) {
+                     $(_this).find("#error").html("Already taken !");
+                     setTimeout((function (_this) {
+                         return function(){
+                             $(_this).find("#error").html("");
+                         }
+                     })(this), 1500);
+
+                 };
+             })(this));
+
+
+             // assigne user name
+             /*              $(document).unbind("username"); */
+             $(document).on("username", (function(_this) {
+                 return function(e) {
+                     $(document).find("#username").html(e.msg);
+                     _this.dialog.close();
+                 };
+             })(this));
+
+         },
+
+
          ready: function () {
              this.connect_to_chatBus();
          },
 
          info: function(Message) {
              $(this).find("#message").html(Message);
-             var dialog = document.getElementById('info-box');
-             dialog.open();
+             this.dialog = document.getElementById('info-box');
+             this.dialog.open();
          },
 
          connect_to_chatBus: function() {
@@ -69,10 +123,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
              this.ws.onopen    = this.handleOpen.bind(this);
              this.ws.onmessage = this.receiveMessage.bind(this);
 
+
+             // send close signal to the server when the user goes away
+             $(window).bind("beforeunload", (function(_this) {
+                 return function(e) {
+                     Message = {
+                         type: 'terminate',
+                         msg : ""
+                     };
+                     _this.ws.send(JSON.stringify(Message));
+                 };
+             })(this));
+
+
              // bind document event to send message to server
              $(document).unbind("send_message");
              $(document).on("send_message", (function(_this) {
                  return function(e) {
+
+                     if (e.msg_type=="chat" && (_this.username == "" || _this.username == undefined)){
+                         _this.info("Please select a username !");
+                     };
+
                      Message = {
                          type: e.msg_type,
                          msg : e.message
@@ -84,6 +156,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
          },
 
+
          handleError: function(error) {
              this.info("Disconnected from ChatBus");
          },
@@ -94,7 +167,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                  msg_type: 'bus_list',
                  message: ""
              });
-             this.info("Connected to chatBus server !");
+             $.event.trigger({
+	         type: "send_message",
+                 msg_type: 'hitchhicker_list',
+                 message: ""
+             });
+             this.info("Connected to chatBus server ! Please type in username");
          },
 
          receiveMessage: function(e) {

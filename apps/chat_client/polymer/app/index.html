@@ -209,7 +209,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <msg-folder flex style="height: 92%; overflow: auto; " >
 
                   <message-card msg="hi there"
-                                author="vanshdeep singh"
+                                author="vansh"
                                 alignment="right"> </message-card>
 
 
@@ -217,7 +217,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 msg="Lorem ipsum dolor sit amet, nec ad conceptam"
                                 alignment="left"> </message-card>
 
-                  <message-card author="kansi"
+                  <message-card author="vansh"
                                 msg="Lorem ipsum dolor sit amet, nec ad conceptam"
                                 alignment="right"> </message-card>
 
@@ -285,26 +285,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="scripts/app.js"></script>
 
     <script type="text/javascript">
+
+     function changeBus() {
+         $(document).find(".active-bus").on("click", function(e) {
+             e.stopImmediatePropagation();
+             BusName = $(e.currentTarget).attr('data-bus-name');
+             $.event.trigger({
+	         type: "send_message",
+                 msg_type: 'bus_subscribed',
+                 message: BusName
+             });
+
+         });
+     };
+
      $(document).unbind("bus_list");
      $(document).on("bus_list", function(e) {
-
          console.log("sidebar received", e.msg);
 
          var Buses       = e.msg.sort();
          var ActiveBuses = Buses.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-
-
          $(document).find("#bus_list").empty();
-
 
          var arrayLength = ActiveBuses.length;
          for (var i = 0; i < arrayLength; i++) {
-             var Busbutton = "<paper-button tabindex=\"0\" class=\"sidebar\">\
+             var Busbutton = "<paper-button tabindex=\"0\" data-bus-name='"+ ActiveBuses[i] +"' class=\"sidebar active-bus\">\
                           <iron-icon icon=\"supervisor-account\"></iron-icon>\
                           <span>" + ActiveBuses[i] + "</span> </paper-button>";
              $(document).find("#bus_list").append(Busbutton);
 
-         }
+         };
+         changeBus();
      });
 
 
@@ -313,6 +324,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          console.log("bus subscribed", e.msg);
          $(document).find(".app-name").html("Bus name: #" + e.msg);
      });
+
+     $(document).unbind("hitchhicker_list");
+     $(document).on("hitchhicker_list", function(e) {
+         console.log("bus subscribed &&&&&&&&&&&&&&&&&&&&&&&&&&", e.msg);
+         var Hitchhickers = e.msg.sort();
+         $(document).find("#hitchhickers").empty();
+
+         var arrayLength = Hitchhickers.length;
+         for (var i = 0; i < arrayLength; i++) {
+             var Hitchhicker = "<a href=\"#\"> <iron-icon icon=\"face\"></iron-icon> <span> "+ Hitchhickers[i] + "</span> </a>"
+             $(document).find("#hitchhickers").append(Hitchhicker);
+         };
+
+     });
+
 
     </script>
 

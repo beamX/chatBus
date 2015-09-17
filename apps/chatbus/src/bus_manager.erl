@@ -4,6 +4,9 @@
 
 %% API functions
 -export([start_link/0
+        ,store_username/2
+        ,get_hitchhickers/1
+        ,remove_hitchhicker/1
         ,check_bus/1
         ,bus_list/0
         ]).
@@ -32,6 +35,15 @@
 start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
+store_username(BusName, Username) ->
+    gen_server:call(?MODULE, {store_username, BusName, Username}).
+
+get_hitchhickers(BusName) ->
+    gen_server:call(?MODULE, {get_hitchhickers, BusName}).
+
+remove_hitchhicker(Hitchhicker) ->
+    gen_server:call(?MODULE, {remove_hitchhickers, Hitchhicker}).
+
 check_bus(BusName) ->
     gen_server:cast(?MODULE, {check_bus, BusName}).
 
@@ -54,8 +66,11 @@ bus_list() ->
 %% @end
 %%--------------------------------------------------------------------
 init([]) ->
-    %% timer:send_interval(10000, {purge_buses}),
-    {ok, #{}}.
+    ets:new(?MODULE, [set, public, named_table
+                     ,{write_concurrency, false}
+                     ,{read_concurrency, true}]),
+
+    {ok, #{users => ?MODULE}}.
 
 %%--------------------------------------------------------------------
 %% @private
@@ -71,6 +86,29 @@ init([]) ->
 %%                                   {stop, Reason, State}
 %% @end
 %%--------------------------------------------------------------------
+handle_call({store_username, BusName, Username}, _From, #{users := Users} = State) ->
+    Reply = case ets:match(Users, {Username, '$1'}, 1) of
+                '$end_of_table' ->
+                    ets:insert(?MODULE, {Username, BusName}),
+                    {ok, Username};
+                _ ->
+                    {ok, error}
+            end,
+    {reply, Reply, State};
+
+handle_call({get_hitchhickers, BusName}, _From, #{users := Users} = State) ->
+    Reply = case ets:match(Users, {'$1', BusName}) of
+                '$end_of_table' ->
+                    {ok, []};
+                List ->
+                    {ok, lists:flatten(List)}
+            end,
+    io:format("hitchhickers : ~p~n", [Reply]),
+    {reply, Reply, State};
+
+handle_call({remove_hitchhickers, Hitchhicker}, _From, #{users := Users} = State) ->
+    ets:delete(Users, Hitchhicker),
+    {reply, ok, State};
 
 handle_call({bus_list}, _From, State) ->
     {reply, {ok, ebus:channels()}, State};
