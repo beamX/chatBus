@@ -5,10 +5,10 @@ all: compile release client
 
 
 compile:
-	rebar3	 compile
+	./rebar3	 compile
 
 release:
-	rebar3	 release
+	./rebar3	 release
 
 
 client:
