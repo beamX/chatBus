@@ -43,7 +43,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                      
                      $(_this).append("<message-card msg='"+ e.message +"' alignment='" + e.align+"' author='" + e.author+"'></message-card>");
                      if (ScrollDown == true) {
-                         _this.scrollTop = _this.scrollHeight;                         
+                         console.log("changing scroll height", _this.scrollTop, _this.scrollHeight);
+                         //_this.scrollTop = $(_this).scrollHeight;
+                         $(_this).scrollTop($(_this)[0].scrollHeight);
                      };
 
                  };

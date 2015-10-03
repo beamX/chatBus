@@ -70,6 +70,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          },
 
          assign_username: function (e){
+             this.username = $.trim(this.username);
              Name = $.trim(this.username);
              if (Name == "" || Name == undefined){ return false;};
 

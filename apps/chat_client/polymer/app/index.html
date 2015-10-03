@@ -132,7 +132,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                 <!-- Drawer Toolbar -->
                 <paper-toolbar id="drawerToolbar" style="color:#e91e63; ">
-                  <span class="paper-font-title">Hitchhickers</span>
+                  <span class="paper-font-title">Hitchhikers</span>
                 </paper-toolbar>
 
                 <!-- Drawer Content -->
@@ -321,13 +321,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
      $(document).unbind("bus_subscribed");
      $(document).on("bus_subscribed", function(e) {
-         console.log("bus subscribed", e.msg);
          $(document).find(".app-name").html("Bus name: #" + e.msg);
      });
 
      $(document).unbind("hitchhicker_list");
      $(document).on("hitchhicker_list", function(e) {
-         console.log("bus subscribed &&&&&&&&&&&&&&&&&&&&&&&&&&", e.msg);
          var Hitchhickers = e.msg.sort();
          $(document).find("#hitchhickers").empty();
 

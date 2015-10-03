@@ -61,13 +61,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                // bind document event to send message to server
                $(document).unbind("chat");
                $(document).on("chat", function(e) {
+                   console.log("received chat ------ ", e);
+
                    $.event.trigger({
 	               type: "add_message",
-                       message: e.msg,
-                       author: "sombody",
+                       message: e.msg.text,
+                       author: e.msg.sender,
                        align: "left"
                    });
-
 
                });
 
@@ -98,10 +99,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                    $.event.trigger({
 	               type: "send_message",
                        msg_type: 'chat',
-                       author  : "Me",
-                       message : this.message
+                       message : {
+                           sender: bus.username,
+                           text  : this.message
+                       }
                    });
-
                    input.val("");
                }
            }
