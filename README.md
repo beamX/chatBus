@@ -12,10 +12,12 @@ UI build using google polymer !
 # Quick Start
 
 Build client
+
     $ cd apps/chat_client/polymer
     $ bower intsall
 
 Build App
+
     $ make
     $ make console
 
