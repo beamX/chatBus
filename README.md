@@ -9,8 +9,13 @@ Reatime distributed chat system.
 UI build using google polymer !
 
 
-# Usage
+# Quick Start
 
+Build client
+    $ cd apps/chat_client/polymer
+    $ bower intsall
+
+Build App
     $ make
     $ make console
 
