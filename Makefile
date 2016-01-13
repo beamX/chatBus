@@ -14,7 +14,9 @@ release:
 client:
 	rm -rf $(CLIENT_PATH)/priv
 	mkdir -p $(CLIENT_PATH)/priv
-	cp -R apps/chat_client/polymer/app/* $(CLIENT_PATH)/priv/
+	cp -R apps/chat_client/ionic/* $(CLIENT_PATH)/priv/
+	# cp -R apps/chat_client/polymer/app/* $(CLIENT_PATH)/priv/
+
 
 console:
 	_build/default/rel/chatbus/bin/chatbus console

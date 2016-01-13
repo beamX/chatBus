@@ -1,0 +1,18 @@
+<ion-side-menu side="left" expose-aside-when="large">
+  <ion-header-bar class="bar-light">
+    <h1 class="title">Channels</h1>
+    <button class="button button-icon ion-ios-plus-empty" ng-click="newChannel()"></button>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <ion-list>
+      <ion-item
+        ng-repeat="channel in channels()"
+        ng-click="selectChannel(channel, $index)"
+        ng-class="{active: activeChannel() == channel}">
+
+        {{channel}}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+</ion-side-menu>

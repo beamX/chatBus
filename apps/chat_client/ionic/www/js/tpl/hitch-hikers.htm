@@ -1,0 +1,13 @@
+<ion-side-menu side="right" expose-aside-when="large">
+  <ion-header-bar class="bar-light">
+    <h1 class="title">Hitchhikers</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <ion-list>
+      <ion-item ng-repeat="hiker in hitchhikers()">
+        {{hiker}}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+</ion-side-menu>

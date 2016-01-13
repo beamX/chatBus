@@ -22,10 +22,10 @@ start(_StartType, _StartArgs) ->
     %% taken from cowboy websocket tutorial
     Dispatch = cowboy_router:compile(
                  [{'_', [
-                         {"/", cowboy_static, {priv_file, chatbus, "index.html"}},
+                         {"/", cowboy_static, {priv_file, chatbus, "./www/index.html"}},
                          {"/ws", ws_handler, []},
                          %{"/static/[...]", cowboy_static, {priv_dir, chatbus, "static"}}
-                         {"/[...]", cowboy_static, {priv_dir, chatbus, "./"}}
+                         {"/[...]", cowboy_static, {priv_dir, chatbus, "./www"}}
 
                         ]}
                  ]),
