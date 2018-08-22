@@ -111,7 +111,7 @@ handle_call({remove_hitchhickers, Hitchhicker}, _From, #{users := Users} = State
     {reply, ok, State};
 
 handle_call({bus_list}, _From, State) ->
-    {reply, {ok, ebus:channels()}, State};
+    {reply, {ok, ebus:topics()}, State};
 
 handle_call(_Request, _From, State) ->
     Reply = ok,
@@ -133,7 +133,7 @@ handle_cast({check_bus, BusName}, State) ->
         [] when BusName =/= default -> pg2:delete(BusName);
         _  -> ok
     end,
-    ws_handler:send_active_channels(ebus:channels()),
+    ws_handler:send_active_channels(ebus:topics()),
     {noreply, State};
 
 handle_cast(_Msg, State) ->
@@ -186,5 +186,5 @@ bind_test_listener() ->
                 [self(), Channel, Msg, Ctx])
     end,
 
-    Listener = ebus_handler:new(F, {listener, <<"test">>}),
-    ok  = ebus:sub(default, [Listener]).
+    Listener = ebus_proc:spawn_handler(F, [{listener, <<"test">>}]),
+    ok  = ebus:sub(Listener, default).
