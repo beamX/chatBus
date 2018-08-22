@@ -13,8 +13,8 @@ init(Req, _Opts) ->
     io:format("connected !~n"),
 
     %% subscribe to default bus
-    BusFd = ebus_handler:new(bus_listener, self()),
-    ok    = ebus:sub(default, [BusFd]),
+    BusFd = ebus_proc:spawn_handler(fun bus_listener:handle_msg/2, [self()]),
+    ok    = ebus:sub(BusFd, default),
 
     %% send subscribes bus name
     auto_send(<<"bus_subscribed">>, default),
@@ -46,15 +46,15 @@ websocket_handle({text, Msg}, Req, #{bus := BusName
 
         <<"bus_subscribed">> ->
             BusName2    = erlang:binary_to_atom(Msg1, utf8),
-            ok          = ebus:unsub(BusName, BusFd),
-            ok          = ebus:sub(BusName2, [BusFd]),
+            ok          = ebus:unsub(BusFd, BusName),
+            ok          = ebus:sub(BusFd, BusName2),
             {ok, Reply} = encode_message(<<"bus_subscribed">>, BusName2),
             {reply, {text, Reply}, Req, State#{bus => BusName2}};
 
         <<"add_bus">> ->
             BusNewName  = erlang:binary_to_atom(Msg1, utf8),
-            ok          = ebus:unsub(BusName, BusFd),
-            ok          = ebus:sub(BusNewName, [BusFd]),
+            ok          = ebus:unsub(BusFd, BusName),
+            ok          = ebus:sub(BusFd, BusNewName),
 
             %% signal bus_manager to send all client list of active buses
             bus_manager:check_bus(BusName),
@@ -82,7 +82,7 @@ websocket_handle({text, Msg}, Req, #{bus := BusName
         <<"terminate">> ->
             io:format("unknown message type ~p~n", [Type]),
             bus_manager:remove_hitchhicker(Hitchhicker),
-            ebus:unsub(BusName, BusFd),
+            ebus:unsub(BusFd, BusName),
             ebus_handler:delete(BusFd),
             {ok, List} = bus_manager:get_hitchhickers(BusName),
             ok = ebus:pub(BusName, {none, <<"hitchhicker_list">>, List}),
